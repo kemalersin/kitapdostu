@@ -1,0 +1,40 @@
+.container
+  h2.page-header Parola Değiştir 
+  .row
+    .col-md-12
+      form.form(name='form', ng-submit='vm.changePassword(form)', novalidate='')
+        .form-group(ng-class='{ "has-success": form.password.$valid && vm.submitted,\
+        "has-error": form.password.$invalid && vm.submitted }')
+          label Şimdiki Parola
+          input.form-control(type='password'
+            name='password'
+            ng-model='vm.user.oldPassword'
+            mongoose-error='',
+            required='')
+          p.help-block(ng-show='form.password.$error.required && vm.submitted')
+            | Şimdiki parolanızı giriniz.
+          p.help-block(ng-show='form.password.$error.mongoose')
+            | {{ vm.errors.other }}
+        .form-group(ng-class='{ "has-success": form.newPassword.$valid && (form.newPassword.$dirty || vm.submitted),\
+        "has-error": form.newPassword.$invalid && (form.newPassword.$dirty || vm.submitted)}')
+          label Yeni Parola
+          input.form-control(type='password'
+            name='newPassword'
+            ng-model='vm.user.newPassword'
+            ng-minlength='3', required='')
+          p.help-block(ng-show='(form.newPassword.$error.minlength || form.newPassword.$error.required) && (form.newPassword.$dirty || vm.submitted)')
+            | Parola en az 3 karakter olmalıdır.
+        .form-group(ng-class='{ "has-success": form.confirmPassword.$valid && vm.submitted,\
+        "has-error": form.confirmPassword.$invalid && vm.submitted }')
+          label Tekrar Yeni Parola
+          input.form-control(type='password'
+            name='confirmPassword'
+            ng-model='vm.user.confirmPassword'
+            match="vm.user.newPassword"
+            ng-minlength='3', required='')
+          p.help-block(ng-show='form.confirmPassword.$error.match && vm.submitted')
+            | Parolalar eşleşmiyor.
+
+        p.help-block.text-success {{ vm.message }}
+
+        button.btn.btn-lg.btn-primary(type='submit') Kaydet

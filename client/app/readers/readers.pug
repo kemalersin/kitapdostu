@@ -1,0 +1,87 @@
+.container
+  h2.page-header Okuyucular
+  .row(ng-hide='waitingForHttp || !vm.initialized')
+    .col-md-2
+      p.input-group
+        span.input-group-addon
+          i.fa.fa-search
+        input.form-control.text-uppercase(type='text',
+          placeholder='Okuyucu ara',
+          ng-model='vm.search')
+      .panel.panel-default
+        .panel-heading Etiketler
+        .panel-body
+          .tag-panel
+            .checkbox(ng-repeat='tag in tags = vm.getTags(vm.readers, vm.tagSet)')
+              label
+                input(type='checkbox',
+                  checklist-model='vm.tagSet.tags',
+                  checklist-value='tag')
+                | {{tag}}
+            span(ng-if='!tags[0]') Etiket yok
+    form.reader-form.col-md-10
+      p.input-group
+        input.form-control.text-uppercase(type='text', autofocus, placeholder='Yeni okuyucu', ng-model='vm.newReader')
+        span.input-group-btn
+          button.btn.btn-primary(type='submit', ng-click='vm.addReader()') Ekle
+      .btn-group
+        label.btn.btn-default.btn-sm(ng-model='vm.filter', uib-btn-radio='0') Tümü
+        label.btn.btn-default.btn-sm(ng-model='vm.filter', uib-btn-radio='1') Eşleşenler
+        label.btn.btn-default.btn-sm(ng-model='vm.filter', uib-btn-radio='2') Eşleşmeyenler
+      .btn-group.pull-right.hidden-xs(ng-if='vm.filter === 1')
+        label.btn.btn-default.btn-sm(ng-model='vm.status.reading', uib-btn-checkbox) Okuyanlar
+        label.btn.btn-default.btn-sm(ng-model='vm.status.completed', uib-btn-checkbox) Tamamlayanlar
+      ul.list-group.table-list
+        li.list-group-item(ng-repeat='reader in readers = (vm.readers | orderByLocale:"name" | itemsByTags:vm.tagSet.tags:vm.filter:vm.paging:vm.search:vm.status)')
+          .row.matching-item
+            div(ng-class='{ "col-md-12": !reader.matching, "col-md-6": reader.matching }')
+              p
+                span.label.label-info {{ vm.getRowNr($index, vm.paging.currentPage) }}
+                = ' '
+                strong.text-uppercase {{reader.name}}
+                button.close(type='button', ng-click='vm.deleteReader(reader)') &times
+              tags-input(ng-model='reader.tags',
+                use-strings='true',
+                allowed-tags-pattern='^[^,]+$',
+                on-tag-added='vm.updateReaderTags($tag, reader)',
+                on-tag-removed='vm.updateReaderTags($tag, reader)')
+                auto-complete(source='vm.getTags(vm.readers, null, $query)')
+            .col-md-6(ng-if='reader.matching')
+              hr.visible-xs.visible-sm
+              p.no-margin-bottom
+                strong Kitap:
+                = ' '
+                span.text-warning.text-uppercase 
+                  a(ui-sref='book({ id: reader.matching.book._id, name: kebabCase(reader.matching.book.name) })')
+                    | {{reader.matching.book.name}}
+                button.close(type='button',
+                  ng-if='reader.reading'
+                  ng-click='vm.deleteMatching(reader.matching)') &times
+                br
+                span(ng-if='reader.reading')
+                  strong {{reader.matching.startDate | date:'longDate'}}
+                  = ' '
+                  | tarihinden bu yana okuyor.
+                span(ng-if='!reader.reading')
+                  strong {{reader.matching.finishDate | date:'longDate'}}
+                  = ' '
+                  | tarihinde okumayı tamamlamış.
+              .btn-group.pull-right
+                button.btn.btn-info.btn-xs(ng-click='vm.showReader(reader)')
+                  i.fa.fa-search &nbsp;
+                button.btn.btn-success.btn-xs(ng-if='reader.reading',
+                  ng-click='vm.finishMatching(reader.matching)') 
+                    i.fa.fa-check &nbsp;
+      ul.pull-right.no-margin-top(uib-pagination,
+        ng-model='vm.paging.currentPage',
+        ng-if='vm.paging.totalItems > appConfig.pagination.itemsPerPage',
+        total-items='vm.paging.totalItems',
+        max-size='appConfig.pagination.maxSize',
+        items-per-page='appConfig.pagination.itemsPerPage',
+        boundary-links='true',
+        previous-text='‹'
+        next-text='›'
+        first-text='«'
+        last-text='»')
+
+      h2.table-list-info.text-info(ng-if='!readers[0]') Okuyucu bulunamadı!

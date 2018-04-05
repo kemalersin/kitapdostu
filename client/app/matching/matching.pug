@@ -1,0 +1,73 @@
+.container
+  h2.page-header Eşleştirme
+  .row(ng-hide='waitingForHttp || !vm.bookTags || !vm.readerTags')
+    .col-md-2
+      .row
+        .col-md-12
+          .panel.panel-default
+            .panel-heading Kitap Etiketleri
+            .panel-body
+              .tag-panel.book-tags
+                .checkbox(ng-repeat='tag in bookTags = vm.bookTags | orderByLocale')
+                  label
+                    input(type='checkbox',
+                      checklist-model='vm.selectedTags.book',
+                      checklist-value='tag')
+                    | {{tag}}
+                span(ng-if='!bookTags[0]') Etiket yok
+        .col-md-12
+          .panel.panel-default
+            .panel-heading Okuyucu Etiketleri
+            .panel-body
+              .tag-panel.reader-tags
+                .checkbox(ng-repeat='tag in readerTags = vm.readerTags | orderByLocale')
+                  label
+                    input(type='checkbox',
+                      checklist-model='vm.selectedTags.reader',
+                      checklist-value='tag')
+                    | {{tag}}
+                span(ng-if='!readerTags[0]') Etiket yok
+
+    .col-md-10(ng-if='!vm.matching[0]')
+      .jumbotron.full-height.text-center
+        img(src='assets/images/mind-map.png', width='64', height='64')
+        h2 Kitapları okuyucularıyla eşleştirmeye hazır mısınız?
+        p Etiket seçerek, eşleştireceğiniz kitapları ve okuyucuları sınırlayabilirsiniz.
+        hr
+        p
+          | Hazır olduğunuzda, aşağıdaki #[strong "Eşleştir"] düğmesine tıklayın.
+          br
+          | #[strong Aklınızda bulunsun:] Siz onaylamadıkça eşleştirmeler kaydedilmez.
+        p &nbsp;
+        p
+          button.btn.btn-lg.btn-warning.override(ng-click='vm.createMatching()', ng-disabled='waitingForHttp') Eşleştir
+
+    form.matching-form.col-md-10(ng-if='vm.matching[0]')
+      .row
+        .col-md-8
+          | Aşağıdaki eşleştirmeleri kaydedebilir ya da vazgeçip yeni bir eşleştirme yapabilirsiniz.
+        .col-md-4
+          .pull-right
+            button.btn.btn-success(ng-click='vm.saveMatching()', ng-disabled='waitingForHttp') Kaydet
+            = ' '
+            button.btn.btn-danger(ng-click='vm.matching = null') Vazgeç
+
+      ul.list-group.table-list.row
+        li.list-group-item(ng-repeat='match in vm.matching | orderByLocale: "name"',
+          ng-class='{"col-md-6": vm.matching.length !== 1, "col-md-12": vm.matching.length === 1}')
+          p
+            span.label.label-info {{$index + 1}}
+            = ' '
+            strong.text-uppercase {{ match.name }}
+            button.close(type='button', ng-click='vm.deleteMatch(match)') &times
+            p
+              span.label.label-default(ng-if='!match.tags[0]') Etiket yok
+              span.label.label-default.tag(ng-repeat='tag in match.tags') {{ tag }}
+          hr
+          p
+            strong Okuyucu:
+            = ' '
+            span.text-uppercase {{ match.reader.name }}
+            p
+              span.label.label-default(ng-if='!match.reader.tags[0]') Etiket yok
+              span.label.label-default.tag(ng-repeat='tag in match.reader.tags') {{ tag }}

@@ -1,0 +1,88 @@
+.container
+  h2.page-header Kitaplar
+  .row(ng-hide='waitingForHttp || !vm.initialized')
+    .col-md-2
+      p.input-group
+        span.input-group-addon
+          i.fa.fa-search
+        input.form-control.text-uppercase(type='text',
+          placeholder='Kitap ara',
+          ng-model='vm.search')
+      .panel.panel-default
+        .panel-heading Etiketler
+        .panel-body
+          .tag-panel
+            .checkbox(ng-repeat='tag in tags = vm.getTags(vm.books, vm.tagSet)')
+              label
+                input(type='checkbox',
+                  checklist-model='vm.tagSet.tags',
+                  checklist-value='tag')
+                | {{tag}}
+            span(ng-if='!tags[0]') Etiket yok
+    form.book-form.col-md-10
+      p.input-group
+        input.form-control.text-uppercase(type='text', autofocus, placeholder='Yeni kitap', ng-model='vm.newBook')
+        span.input-group-btn
+          button.btn.btn-primary(type='submit', ng-click='vm.addBook()') Ekle
+      .btn-group
+        label.btn.btn-default.btn-sm(ng-model='vm.filter', uib-btn-radio='0') Tümü
+        label.btn.btn-default.btn-sm(ng-model='vm.filter', uib-btn-radio='1') Eşleşenler
+        label.btn.btn-default.btn-sm(ng-model='vm.filter', uib-btn-radio='2') Eşleşmeyenler
+      .btn-group.pull-right.hidden-xs(ng-if='vm.filter === 1')
+        label.btn.btn-default.btn-sm(ng-model='vm.status.reading', uib-btn-checkbox) Okunanlar
+        label.btn.btn-default.btn-sm(ng-model='vm.status.completed', uib-btn-checkbox) Tamamlananlar
+      ul.list-group.table-list
+        li.list-group-item(ng-repeat='book in books = (vm.books | orderByLocale:"name" | itemsByTags:vm.tagSet.tags:vm.filter:vm.paging:vm.search:vm.status)')
+          .row.matching-item
+            div(ng-class='{ "col-md-12": !book.matching, "col-md-6": book.matching }')
+              p
+                span.label.label-info {{ vm.getRowNr($index, vm.paging.currentPage) }}
+                = ' '
+                strong.text-uppercase {{book.name}}
+                button.close(type='button', ng-click='vm.deleteBook(book)') &times
+              tags-input(ng-model='book.tags',
+                use-strings='true',
+                allowed-tags-pattern='^[^,]+$',
+                on-tag-added='vm.updateBookTags($tag, book)',
+                on-tag-removed='vm.updateBookTags($tag, book)')
+                auto-complete(source='vm.getTags(vm.books, null, $query)')
+            .col-md-6(ng-if='book.matching')
+              hr.visible-xs.visible-sm
+              p.no-margin-bottom
+                strong Okuyucu:
+                = ' '
+                span.text-warning.text-uppercase 
+                  a(ui-sref='reader({ id: book.matching.reader._id, name: kebabCase(book.matching.reader.name) })')
+                    | {{book.matching.reader.name}}
+                button.close(type='button',
+                  ng-if='book.reading'
+                  ng-click='vm.deleteMatching(book.matching)') &times
+                br
+                span(ng-if='book.reading')
+                  strong {{book.matching.startDate | date:'longDate'}}
+                  = ' '
+                  | tarihinden bu yana okuyor.
+                span(ng-if='!book.reading')
+                  strong {{book.matching.finishDate | date:'longDate'}}
+                  = ' '
+                  | tarihinde okumayı tamamlamış.
+              .btn-group.pull-right
+                button.btn.btn-info.btn-xs(ng-click='vm.showBook(book)')
+                  i.fa.fa-search &nbsp;
+                button.btn.btn-success.btn-xs(ng-if='book.reading',
+                  ng-click='vm.finishMatching(book.matching)') 
+                    i.fa.fa-check &nbsp;
+
+      ul.pull-right.no-margin-top(uib-pagination,
+        ng-model='vm.paging.currentPage',
+        ng-if='vm.paging.totalItems > appConfig.pagination.itemsPerPage',
+        total-items='vm.paging.totalItems',
+        max-size='appConfig.pagination.maxSize',
+        items-per-page='appConfig.pagination.itemsPerPage',
+        boundary-links='true',
+        previous-text='‹'
+        next-text='›'
+        first-text='«'
+        last-text='»')
+
+      h2.table-list-info.text-info(ng-if='!books[0]') Kitap bulunamadı!

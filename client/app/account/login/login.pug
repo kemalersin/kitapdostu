@@ -1,0 +1,34 @@
+.container.fixed-center.col-xs-10
+  .row
+    .col-md-4.col-md-offset-4
+      .panel.panel-default.login
+        .panel-body
+          h3.text-center.text-muted.no-margin-top
+            i.fa.fa-user-circle.fa-4x
+          br
+          form.form(name='form', ng-submit='vm.login(form)', novalidate='')
+            .form-group
+              input.form-control(type='text',
+                name='email',
+                required='',
+                autofocus='',
+                placeholder='E-posta',
+                ng-model='vm.user.email')
+            .form-group
+              input.form-control(type='password',
+                name='password',
+                required='',
+                placeholder='Parola'
+                ng-model='vm.user.password')
+
+            .form-group.has-error
+              p.help-block(ng-show='form.email.$error.required && form.password.$error.required && vm.submitted')
+                | E-posta adresinizi ve parolanızı giriniz.
+              p.help-block {{ vm.errors.login }}
+
+            div
+              button.btn.btn-primary.btn-lg.btn-block.btn-login(type='submit',
+                ng-disabled='waitingForHttp')
+                big Giriş
+      p.text-center
+        a(ui-sref='signup') Ücretsiz kayıt olun

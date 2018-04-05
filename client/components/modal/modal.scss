@@ -1,0 +1,50 @@
+.modal-primary,
+.modal-info,
+.modal-success,
+.modal-warning,
+.modal-danger {
+  .modal-header {
+    color: #fff;
+    border-radius: 5px 5px 0 0;
+  }
+}
+
+.modal-primary .modal-header {
+  background: $brand-primary;
+}
+
+.modal-info .modal-header {
+  background: $brand-info;
+}
+
+.modal-success .modal-header {
+  background: $brand-success;
+}
+
+.modal-warning .modal-header {
+  background: $brand-warning;
+}
+
+.modal-danger .modal-header {
+  background: $brand-danger;
+}
+
+.modal-header {
+  a {
+    color: inherit !important;
+  }
+}
+
+.modal.info {
+  overflow-y: hidden;
+
+  .modal-dialog {
+    max-height: calc(100vh - 60px);
+
+    .modal-body {
+      overflow-y: auto;
+      padding-bottom: 0;
+      max-height: calc(100vh - 221px);
+    }
+  }
+}

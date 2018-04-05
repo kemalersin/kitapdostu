@@ -1,0 +1,44 @@
+mixin reader()
+  p
+    strong Okuyucu:
+    = ' '
+    span.text-warning.text-uppercase
+      a(ui-sref='reader({ id: matching.reader._id, name: kebabCase(matching.reader.name) })',
+        ng-click='$dismiss()') {{ matching.reader.name }}
+    br
+    span(ng-if='matching.status === 1')
+      strong {{matching.startDate | date:'longDate'}}
+      = ' '
+      | tarihinden bu yana okuyor.
+    span(ng-if='matching.status !== 1')
+      strong {{matching.finishDate | date:'longDate'}}
+      = ' '
+      | tarihinde okumayı tamamlamış.
+  p
+    span.label.label-default(ng-if='!matching.reader.tags[0]') Etiket yok
+    span.label.label-default.tag(ng-repeat='tag in matching.reader.tags') {{ tag }}
+
+.modal-header(ng-if='vm.isModal')
+  h3.modal-title.text-info.text-uppercase
+    | {{ vm.book.name }}
+    small.text-info
+      a.pull-right(ui-sref='book({ id: vm.book._id, name: kebabCase(vm.book.name) })', ng-click='$dismiss()')
+        i.fa.fa-external-link
+div(ng-class='{ "modal-body": vm.isModal, "container": !vm.isModal }')
+  h2.page-header.text-uppercase(ng-hide='vm.isModal || !vm.initialized') {{ vm.book.name }}
+  p.no-margin-bottom(ng-show='vm.initialized')
+    span.label.label-default(ng-if='!vm.book.tags[0]') Etiket yok
+    span.label.label-default.tag(ng-repeat='tag in vm.book.tags') {{ tag }}
+  form.book-form
+    ul.list-group.table-list.row
+      li.list-group-item(ng-class='{ "col-md-6": !vm.isModal }',
+        ng-repeat='matching in vm.book.matchings')
+        .row
+          .col-md-1.hidden-xs.hidden-sm
+            span.label.label-info {{$index + 1}}
+          .col-md-11.no-padding-left.hidden-xs.hidden-sm
+            +reader
+          .col-md-12.visible-xs.visible-sm
+            +reader
+.modal-footer(ng-if='vm.isModal')
+  button.btn.btn-default(ng-click='$dismiss()') Kapat

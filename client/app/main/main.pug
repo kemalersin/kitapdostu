@@ -1,0 +1,64 @@
+header#banner.hero-unit
+  .container
+    h1 Hey, hey!
+    p.lead kitapdostu, kitapları okuyucularıyla eşleştirir...
+    img(src='assets/images/literature.png', alt='kitapdostu' width='96', height='96')
+
+.container
+  .row
+    .col-md-12
+      h2.page-header.text-center Nasıl Kullanılır?
+      .row
+        .col-md-3
+          .panel.panel-default
+            .panel-body.text-center
+              p.page-header.text-warning.no-margin-top
+                big Kayıt Olun
+              a.text-muted(ng-href='{{$ctrl.isLoggedIn ? "/" : "kayit"}}')
+                img(src='assets/images/form.png', alt='Kayıt Olun' width='64', height='64')
+                hr
+                p Kayıt olmak hızlı ve ücretsizdir.
+        .col-md-3  
+          .panel.panel-default
+            .panel-body.text-center
+              p.page-header.text-warning.no-margin-top
+                big Kitap Ekleyin
+              a.text-muted(ui-sref='books')
+                img(src='assets/images/books.png', alt='Kitap Ekleyin' width='64', height='64')
+                hr
+                p Dilediğiniz kadar kitap ekleyin.
+        .col-md-3      
+          .panel.panel-default
+            .panel-body.text-center
+              p.page-header.text-warning.no-margin-top
+                big Okuyucu Ekleyin
+              a.text-muted(ui-sref='readers')
+                img(src='assets/images/reading.png', alt='Okuyucu Ekleyin' width='64', height='64')
+                hr
+                p Okuyucularınızı ekleyip etiketleyin.
+        .col-md-3      
+          .panel.panel-default
+            .panel-body.text-center
+              p.page-header.text-warning.no-margin-top
+                big Eşleştirin
+              a.text-muted(ui-sref='matching')
+                img(src='assets/images/mind-map.png', alt='Eşleştirin' width='64', height='64')
+                hr
+                p Kitapları okuyucularla eşleştirin.
+  .row
+    .col-md-12
+      h3 &nbsp;
+      .row
+        .col-md-12
+          .panel.panel-default
+            .panel-body
+              h2.page-header.text-center.no-margin-top Kitap ve Okuyucu Ekleme
+              .embed-responsive.embed-responsive-16by9
+                iframe.embed-responsive-item(src='https://www.youtube.com/embed/-q8eNidMRY8?rel=0&showinfo=0', frameborder='0', allow='autoplay; encrypted-media', allowfullscreen='')
+        .col-md-12
+          .panel.panel-default
+            .panel-body
+              h2.page-header.text-center.no-margin-top Kitap ve Okuyucu Eşleştirme
+              .embed-responsive.embed-responsive-16by9
+                iframe.embed-responsive-item(src='https://www.youtube.com/embed/fwVQEobnREo?rel=0&showinfo=0', frameborder='0', allow='autoplay; encrypted-media', allowfullscreen='')
+
